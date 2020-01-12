@@ -44,6 +44,5 @@ def main():
     print(positions_array)
     #print(positions_array['positions'])
     
-
 if __name__ == '__main__':
     main()
