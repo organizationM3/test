@@ -6,7 +6,7 @@ import oandapyV20.endpoints.instruments as instruments
 import configparser
 import os
 import pandas as pd
-import statsmodels.api as sm
+from statsmodels import api as sm
 
 def lambda_handler(event, context):
     config_ini = configparser.ConfigParser()
@@ -25,10 +25,9 @@ def lambda_handler(event, context):
     
     df = pd.DataFrame(oandaJsonToPythonList(api.request(response)))
     df.columns = ['Datetime', 'Volume', 'Open', 'High', 'Low', 'Close']
+    df.set_index('Datetime',inplace=True)
 
-    print(df)
-    targetData = df['Close'].values
-    print(type(targetData))
+    targetData = [float(s) for s in df['Close'].values]
     print(sarima_predict(targetData))
 
     return {
@@ -62,7 +61,6 @@ def sarima_predict(data):
                     best_result = result
                     aic_min = result.aic
     return best_result.forecast(1)[0]
-
 
 if __name__=='__main__':
     '''
